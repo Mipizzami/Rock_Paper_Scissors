@@ -1,91 +1,75 @@
 console.log("Hello World!")
 
-function getComputerChoice(max){
-    return Math.floor(Math.random() * max)
-}
-
-function getHumanChoice(){
-let choice = prompt("What's your choice? Rock/Paper/Scissors");
-let x = 0;
-if (choice.toLowerCase() == "rock"){
-    alert('you chose rock');
-}
-else if (choice.toLowerCase() == "paper"){
-    x = x + 1
-    alert('you chose paper');
-}
-else if (choice.toLowerCase() == "scissors"){
-    x = x + 2
-    alert('you chose scissors');
-}
-else {
-    alert('you spelled your choice wrong');
-}
-return x;
-}
-
 let HumanScore = 0;
-let ComputerScore = 0;  
+let ComputerScore = 0;
+const resultDiv = document.querySelector('#result');
+const scoreDiv = document.querySelector('#score');  
 
-function playRound(humanChoice, computerChoice){
-    // Both of you took the same
-    if (humanChoice == computerChoice){
-        alert('DRAW!');
-        alert(`Human: ${HumanScore}, Computer: ${ComputerScore}`);
-    }
-    // You chose rock
-    if (humanChoice == 0){
-        if (computerChoice == 1){
-            alert('You Lose, Computer chose Paper');
-            ComputerScore++;
-            alert(`Human: ${HumanScore}, Computer: ${ComputerScore}`);
-        }
-        else if (computerChoice == 2){
-            alert('You win, Computer chose Scissors');
-            HumanScore++;
-            alert(`Human: ${HumanScore}, Computer: ${ComputerScore}`);
-        }
-    }
-    // You chose paper
-    else if (humanChoice == 1){
-        if (computerChoice == 2){
-            alert('You Lose, Computer chose Scissors');
-            ComputerScore++;
-            alert(`Human: ${HumanScore}, Computer: ${ComputerScore}`);
-        }
-        else if (computerChoice == 0){
-            alert('You win, Computer chose Rock');
-            HumanScore++;
-            alert(`Human: ${HumanScore}, Computer: ${ComputerScore}`);
-        }
-    }
 
-    else if (humanChoice == 2){
-        if (computerChoice == 0){
-            alert('You Lose, Computer chose Rock');
-            ComputerScore++;
-            alert(`Human: ${HumanScore}, Computer: ${ComputerScore}`);
-        }
-        else if (computerChoice == 1){
-            alert('You win, Computer chose Paper');
-            HumanScore++;
-            alert(`Human: ${HumanScore}, Computer: ${ComputerScore}`);
-        }
+function getComputerChoice(max){
+    let compChoice = Math.floor(Math.random() * max);
+    if (compChoice === 0){
+        return 'Rock';
     }
-
+    else if (compChoice === 1){
+        return 'Paper';
+    }
+    else if (compChoice === 2){
+        return 'Scissors';
+    }
 }
 
-function playGame(){
-    const humanChoice = getHumanChoice();
+function getHumanChoice(event) {
+    const humanChoice = event.target.id;
     const computerChoice = getComputerChoice(3);
-
-    playRound(humanChoice, computerChoice);
+    const result = playRound(humanChoice, computerChoice)
+    updateResult(humanChoice, computerChoice, result)
+    updateScore(result);
+   
 }
 
-playGame();
-playGame();
-playGame();
-playGame();
-playGame();
 
-alert(`Human: ${HumanScore}, Computer: ${ComputerScore}`);
+function playRound(human, computer){
+    if (human === computer) {
+        return 'Draw';
+    }
+    if (
+        (human === 'Rock' && computer === 'Scissors') ||
+        (human === 'Paper' && computer === 'Rock') ||
+        (human === 'Scissors' && computer === 'Paper')
+    ) {
+        return 'Player';
+    }
+    else {
+        return 'Computer';
+    }
+}
+
+function updateResult(human, computer, result) {
+    resultDiv.textContent = `You chose: ${human} | Computer chose: ${computer} result: ${result} Won this round.`;
+}
+
+function updateScore(result) {
+    if (result === 'Player'){
+        HumanScore++;
+    }
+    else if (result === 'Computer'){
+        ComputerScore++;
+    }
+    scoreDiv.textContent = `Player: ${HumanScore} ||| Computer: ${ComputerScore}`;
+
+    if (HumanScore === 5) {
+        resultDiv.textContent = 'You Won!';
+    }
+    else if (ComputerScore === 5) {
+        resultDiv.textContent = 'You Lost!';
+    }
+}
+
+const buttons = document.querySelectorAll('.choice-btn');
+
+buttons.forEach(button => {
+    button.addEventListener('click', getHumanChoice);
+});
+
+
